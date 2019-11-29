@@ -1,45 +1,41 @@
 from flask import Flask,views,render_template,redirect,url_for,request,session,current_app,g,abort
 import config
 from exts import db
-from models import User
+from models import User,Article,Tag
 from forms import registForm,loginForm,transferForm
 from auth import login_required
 from flask_wtf import CSRFProtect
 from signals import login_signal
-from flask_restful import Api,Resource,reqparse,inputs,marshal_with,fields
+
 
 app = Flask(__name__)
 app.config.from_object(config)
 # CSRFProtect(app)
 db.init_app(app)
 
-api = Api(app)
+# api = Api(app)
 
 with app.app_context():
     print(current_app.name)
 
-class restView(Resource):
-
-    resource_fields = {
-        'userName':fields.String
-    }
-
-    @marshal_with(resource_fields)
-    def post(self,username = None):
-        parse = reqparse.RequestParser()
-        parse.add_argument('username', type=str, help='请输入用户名！')
-        parse.add_argument('age', type=int, help='请输入年龄！')
-        parse.add_argument('birthday',type=inputs.date,help='时间输入不正确！',required = True)
-        args = parse.parse_args()
-        print(args)
-        user = User.query.filter_by(userName=username).first()
-        return user
-    def get(self):
-        return {'test': 'get'}
-api.add_resource(restView,'/rest/<username>',endpoint = 'rest')
-
 @app.route('/')
 def hello_world():
+    user1 = User(email='310315734@qq.com',userName='llj',passWord=123456)
+    user2 = User(email='***@star-net.cn',userName='allen',passWord=123456)
+    article1 = Article(articleName='红楼梦')
+    article2 = Article(articleName='三国演义')
+    tag1 = Tag(tag='nice')
+    tag2 = Tag(tag='cute')
+    article1.author = user1
+    article2.author = user2
+    print(type(article1.tags))
+    article1.tags.append(tag1)
+    article1.tags.append(tag2)
+    article2.tags.append(tag1)
+    article2.tags.append(tag2)
+    db.session.add(article1)
+    db.session.add(article2)
+    db.session.commit()
     # a=1/0
     # abort(500)
     login_signal.send(username = g.username)
@@ -94,9 +90,9 @@ class loginView(views.MethodView):
     def post(self):
 
         csrf_token = session.get('csrf_token')
-        print("=" * 30)
-        print(csrf_token)
-        print("=" * 30)
+        # print("=" * 30)
+        # print(csrf_token)
+        # print("=" * 30)
 
         form = loginForm(request.form)
         email = form.email.data
@@ -179,8 +175,8 @@ def page_not_found(error):
 #     print(kwargs['name'])
 # hh(6,5,3,name='llj',age=18)
 if __name__ == '__main__':
-
-    app.run()
+    # api = Api(app)
+    app.run(debug=True)
 
 
 
