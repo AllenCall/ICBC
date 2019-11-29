@@ -1,0 +1,5 @@
+print('155')
+print('123')
+print('789')
+print('init')
+print('456')
