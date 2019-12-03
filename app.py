@@ -6,36 +6,37 @@ from forms import registForm,loginForm,transferForm
 from auth import login_required
 from flask_wtf import CSRFProtect
 from signals import login_signal
-
+from controllers.restView import rest_bp
 
 app = Flask(__name__)
 app.config.from_object(config)
 # CSRFProtect(app)
 db.init_app(app)
-
+app.register_blueprint(rest_bp)
 # api = Api(app)
+
 
 with app.app_context():
     print(current_app.name)
 
 @app.route('/')
 def hello_world():
-    user1 = User(email='310315734@qq.com',userName='llj',passWord=123456)
-    user2 = User(email='***@star-net.cn',userName='allen',passWord=123456)
-    article1 = Article(articleName='红楼梦')
-    article2 = Article(articleName='三国演义')
-    tag1 = Tag(tag='nice')
-    tag2 = Tag(tag='cute')
-    article1.author = user1
-    article2.author = user2
-    print(type(article1.tags))
-    article1.tags.append(tag1)
-    article1.tags.append(tag2)
-    article2.tags.append(tag1)
-    article2.tags.append(tag2)
-    db.session.add(article1)
-    db.session.add(article2)
-    db.session.commit()
+    # user1 = User(email='310315734@qq.com',userName='llj',passWord=123456)
+    # user2 = User(email='***@star-net.cn',userName='allen',passWord=123456)
+    # article1 = Article(articleName='红楼梦')
+    # article2 = Article(articleName='三国演义')
+    # tag1 = Tag(tag='nice')
+    # tag2 = Tag(tag='cute')
+    # article1.author = user1
+    # article2.author = user2
+    # print(type(article1.tags))
+    # article1.tags.append(tag1)
+    # article1.tags.append(tag2)
+    # article2.tags.append(tag1)
+    # article2.tags.append(tag2)
+    # db.session.add(article1)
+    # db.session.add(article2)
+    # db.session.commit()
     # a=1/0
     # abort(500)
     login_signal.send(username = g.username)
