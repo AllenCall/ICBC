@@ -8,6 +8,16 @@ from flask_wtf import CSRFProtect
 from signals import login_signal
 from controllers.restView import rest_bp
 
+import memcache
+
+mc = memcache.Client(['127.0.0.1:11211'], debug=True) # 可以分布式，再加上一个ip:port
+mc.set('age', 18, time=120)
+mc.set_multi({'name':'123','password':123456})
+mc.incr('age',delta=2)
+age = mc.get('age')
+print(age)
+mc.delete('username')
+
 app = Flask(__name__)
 app.config.from_object(config)
 # CSRFProtect(app)
@@ -177,6 +187,7 @@ def page_not_found(error):
 # hh(6,5,3,name='llj',age=18)
 if __name__ == '__main__':
     # api = Api(app)
+
     app.run(debug=True)
 
 
